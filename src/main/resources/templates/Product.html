@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách sản phẩm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #333;
+        }
+        h2 { 
+            color: #333; 
+            font-size: 24px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .nav-links a:hover {
+            background-color: #e6f2ff;
+        }
+        .create-btn {
+            background-color: #28a745;
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .create-btn:hover {
+            background-color: #218838 !important;
+        }
+        .search-box {
+            float: right;
+            margin-bottom: 20px;
+        }
+        .search-box input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 250px;
+            font-size: 14px;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        .search-box button {
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px;
+            font-size: 14px;
+        }
+        .search-box button:hover {
+            background-color: #5a6268;
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin-top: 10px;
+            background-color: white;
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+            font-size: 14px;
+        }
+        th { 
+            background-color: #333;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+        td img {
+            max-width: 80px;
+            max-height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-edit {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-edit:hover {
+            background-color: #5a6268;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Products</h2>
+            <div class="nav-links">
+                <a href="/home">Home</a>
+                <a href="/products">Products</a>
+            </div>
+        </div>
+        
+        <a href="/products/create" class="create-btn">Create New Product</a>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." onkeyup="searchProducts()">
+            <button onclick="clearSearch()">Clear</button>
+        </div>
+        
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                    <th>Category Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product, iterStat : ${products}">
+                    <td th:text="${iterStat.count}">1</td>
+                    <td th:text="${product.name}">laptop 1</td>
+                    <td th:text="${product.price}">30000</td>
+                    <td>
+                        <img th:src="@{/images/{img}(img=${product.image})}" 
+                             alt="Product image"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22monospace%22 font-size=%2212px%22 fill=%22%23999%22%3ENo Image%3C/text%3E%3C/svg%3E'">
+                    </td>
+                    <td th:text="${product.category}">Laptop</td>
+                    <td>
+                        <div class="action-btns">
+                            <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-edit">Edit</a>
+                            <form th:action="@{/products/delete/{id}(id=${product.id})}" method="post" 
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');"
+                                  style="display: inline;">
+                                <button type="submit" class="btn btn-delete">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="footer">
+            © 2025 - Phát triển ứng dụng với J2EE
+        </div>
+    </div>
+    
+    <script>
+        // Hàm tìm kiếm realtime
+        function searchProducts() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase().trim();
+            const table = document.getElementById('productTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            
+            let visibleCount = 0;
+            
+            // Lặp qua tất cả các dòng trong bảng
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const name = row.getElementsByTagName('td')[1]; // Cột Name
+                const category = row.getElementsByTagName('td')[4]; // Cột Category
+                
+                if (name && category) {
+                    const nameText = name.textContent || name.innerText;
+                    const categoryText = category.textContent || category.innerText;
+                    
+                    // Tìm kiếm trong cả tên và danh mục
+                    if (nameText.toLowerCase().indexOf(filter) > -1 || 
+                        categoryText.toLowerCase().indexOf(filter) > -1) {
+                        row.style.display = '';
+                        visibleCount++;
+                        // Cập nhật lại số thứ tự
+                        row.getElementsByTagName('td')[0].textContent = visibleCount;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            }
+            
+            // Hiển thị thông báo nếu không tìm thấy kết quả
+            let noResultRow = document.getElementById('noResultRow');
+            if (visibleCount === 0 && filter !== '') {
+                if (!noResultRow) {
+                    noResultRow = table.getElementsByTagName('tbody')[0].insertRow(0);
+                    noResultRow.id = 'noResultRow';
+                    const cell = noResultRow.insertCell(0);
+                    cell.colSpan = 6;
+                    cell.style.textAlign = 'center';
+                    cell.style.padding = '20px';
+                    cell.style.color = '#666';
+                    cell.innerHTML = '⚠️ Không tìm thấy sản phẩm phù hợp';
+                }
+                noResultRow.style.display = '';
+            } else if (noResultRow) {
+                noResultRow.style.display = 'none';
+            }
+        }
+        
+        // Hàm xóa tìm kiếm
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchProducts();
+            document.getElementById('searchInput').focus();
+        }
+        
+        // Tự động focus vào ô tìm kiếm khi trang load
+        window.onload = function() {
+            // Khôi phục lại số thứ tự ban đầu
+            const table = document.getElementById('productTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].getElementsByTagName('td')[0].textContent = (i + 1);
+            }
+        };
+    </script>
+</body>
+</html>
