@@ -1,51 +1,30 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Category;
+import com.example.demo.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class CategoryService {
-    private List<Category> categories = new ArrayList<>(Arrays.asList(
-        new Category(1, "Điện thoại"),
-        new Category(2, "Laptop"),
-        new Category(3, "Máy tính bảng"),
-        new Category(4, "Phụ kiện")
-    ));
-    
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public List<Category> getAllCategories() {
-        return categories;
+        return categoryRepository.findAll();
     }
-    
-    public Category getCategoryById(int id) {
-        return categories.stream()
-                .filter(category -> category.getId() == id)
-                .findFirst()
-                .orElse(null);
+
+    public void saveCategory(Category category) {
+        categoryRepository.save(category);
     }
-    
-    public void addCategory(Category category) {
-        int newId = categories.stream()
-                .mapToInt(Category::getId)
-                .max()
-                .orElse(0) + 1;
-        category.setId(newId);
-        categories.add(category);
+
+    public Category getCategoryById(Integer id) {
+        return categoryRepository.findById(id).orElse(null);
     }
-    
-    public void updateCategory(int id, Category updatedCategory) {
-        categories.stream()
-                .filter(category -> category.getId() == id)
-                .findFirst()
-                .ifPresent(category -> {
-                    category.setName(updatedCategory.getName());
-                });
-    }
-    
-    public void deleteCategory(int id) {
-        categories.removeIf(category -> category.getId() == id);
+
+    public void deleteCategory(Integer id) {
+        categoryRepository.deleteById(id);
     }
 }
