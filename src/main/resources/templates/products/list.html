@@ -2,59 +2,178 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{_layout}">
-<head><meta charset="UTF-8"><title>Danh Sách Sản Phẩm</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Sách Sản Phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background: linear-gradient(180deg, #f8fcff 0%, #f2f8fb 100%);
+            font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+            color: #13212b;
+        }
+
+        .page-header {
+            background: linear-gradient(125deg, #155e75 0%, #0ea5b7 45%, #22c55e 100%);
+            color: #ecfeff;
+            border-radius: 18px;
+            padding: 1.35rem 1.5rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 20px 30px rgba(14, 116, 144, 0.25);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .soft-card {
+            border: 1px solid rgba(14, 116, 144, 0.18);
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
+        }
+
+        .btn-brand {
+            border: 0;
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0e7490 0%, #155e75 100%);
+        }
+
+        .meta-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: rgba(255, 255, 255, 0.18);
+            color: #f0f9ff;
+            border-radius: 999px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        .toolbar-card {
+            background: var(--surface-soft);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.1rem;
+            color: var(--text-muted);
+            font-size: 0.93rem;
+        }
+
+        .product-card {
+            overflow: hidden;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 32px rgba(2, 32, 45, 0.12);
+        }
+
+        .product-card .thumb {
+            object-fit: cover;
+            height: 188px;
+            width: 100%;
+            background: #edf3f7;
+        }
+
+        .badge-category {
+            background: #e0f2fe;
+            color: #075985;
+            border: 1px solid #bae6fd;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.78rem;
+            padding: 0.35rem 0.6rem;
+        }
+
+        .price-tag {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0f766e;
+            margin: 0;
+        }
+
+        .action-row { gap: 0.5rem; }
+
+        .empty-box {
+            border: 1px dashed #94a3b8;
+            border-radius: var(--radius-lg);
+            padding: 2.2rem 1rem;
+            background: rgba(255, 255, 255, 0.65);
+        }
+    </style>
+</head>
 <body>
 <div layout:fragment="content">
 
-    <!-- Header -->
-    <div class="page-header d-flex justify-content-between align-items-center">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
-            <h3 class="mb-1 fw-bold"><i class="bi bi-box-seam me-2"></i>Danh Sách Sản Phẩm</h3>
-            <p class="mb-0 opacity-75 small">Quản lý toàn bộ sản phẩm trong hệ thống</p>
+            <h2 class="section-title mb-2"><i class="bi bi-box-seam me-2"></i>Danh Sách Sản Phẩm</h2>
+            <p class="mb-0 opacity-75">Quản lý toàn bộ sản phẩm trong hệ thống</p>
         </div>
-        <a th:href="@{/products/add}" class="btn btn-light fw-semibold shadow-sm">
-            <i class="bi bi-plus-lg me-1 text-primary"></i>Thêm Sản Phẩm
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="meta-chip"><i class="bi bi-collection"></i><span th:text="${#lists.size(products)} + ' sản phẩm'"></span></span>
+            <a th:href="@{/products/add}" class="btn btn-light fw-semibold px-3">
+                <i class="bi bi-plus-lg me-1 text-primary"></i>Thêm Sản Phẩm
+            </a>
+        </div>
+    </div>
+
+    <div class="toolbar-card d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span><i class="bi bi-stars me-1"></i>Giao diện thẻ giúp bạn duyệt nhanh ảnh, giá và danh mục.</span>
+        <a th:href="@{/products/add}" class="btn btn-brand btn-sm px-3">
+            <i class="bi bi-plus-circle me-1"></i>Tạo mới
         </a>
     </div>
 
-    <!-- Empty state -->
-    <div th:if="${#lists.isEmpty(products)}" class="text-center py-5 text-muted">
-        <i class="bi bi-inbox display-3 d-block mb-3 opacity-25"></i>
-        <p class="fs-5">Chưa có sản phẩm nào.</p>
-        <a th:href="@{/products/add}" class="btn btn-primary mt-2">
+    <div th:if="${#lists.isEmpty(products)}" class="empty-box text-center text-muted">
+        <i class="bi bi-inbox display-4 d-block mb-3 opacity-50"></i>
+        <p class="fs-5 mb-1">Chưa có sản phẩm nào.</p>
+        <p class="mb-3">Bắt đầu bằng cách tạo sản phẩm đầu tiên.</p>
+        <a th:href="@{/products/add}" class="btn btn-brand px-4">
             <i class="bi bi-plus-lg me-1"></i>Thêm ngay
         </a>
     </div>
 
-    <!-- Product cards -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4" th:unless="${#lists.isEmpty(products)}">
         <div class="col" th:each="product : ${products}">
-            <div class="card h-100 shadow-sm">
-                <img class="card-img-top"
+            <article class="soft-card product-card h-100">
+                <img class="thumb"
                      alt="Ảnh sản phẩm"
-                     th:src="${product.image != null and !#strings.isEmpty(product.image)} ?
-                             (#strings.startsWith(product.image, 'http') ? product.image : '/images/' + product.image) :
-                             'https://placehold.co/400x200/e9ecef/6c757d?text=No+Image'">
-                <div class="card-body d-flex flex-column">
-                    <span class="badge bg-info text-dark mb-2 align-self-start"
-                          th:text="${product.category != null} ? ${product.category.name} : 'Chưa phân loại'"></span>
-                    <h5 class="card-title fw-semibold" th:text="${product.name}"></h5>
-                    <p class="card-text text-danger fw-bold fs-5 mt-auto mb-0"
+                     th:src="${product.image != null and !#strings.isEmpty(product.image)
+                         ? (#strings.startsWith(product.image, 'http') ? product.image : '/images/' + product.image)
+                         : 'https://placehold.co/400x200/e9ecef/6c757d?text=No+Image'}">
+                <div class="p-3 d-flex flex-column" style="min-height: 186px;">
+                    <span class="badge-category mb-2 align-self-start"
+                          th:text="${product.category != null ? product.category.name : 'Chưa phân loại'}"></span>
+                    <h5 class="fw-semibold mb-2" th:text="${product.name}"></h5>
+                    <p class="text-secondary small mb-3">Mã sản phẩm: #<span th:text="${product.id}"></span></p>
+                    <p class="price-tag mt-auto"
                        th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
                 </div>
-                <div class="card-footer bg-white border-0 d-flex gap-2 pb-3 pt-2">
+                <div class="p-3 pt-0 d-flex action-row">
                     <a th:href="@{/products/edit/{id}(id=${product.id})}"
                        class="btn btn-outline-primary btn-sm flex-fill">
                         <i class="bi bi-pencil-square me-1"></i>Sửa
                     </a>
                     <form th:action="@{/products/delete/{id}(id=${product.id})}" method="post" class="flex-fill"
-                          onsubmit="return confirm('Xóa sản phẩm \'' + /*[[${product.name}]]*/ '' + '\'?')">
+                          onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
                         <button type="submit" class="btn btn-outline-danger btn-sm w-100">
                             <i class="bi bi-trash me-1"></i>Xóa
                         </button>
                     </form>
                 </div>
-            </div>
+            </article>
         </div>
     </div>
 

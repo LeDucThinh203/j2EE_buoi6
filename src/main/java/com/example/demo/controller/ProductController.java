@@ -45,14 +45,14 @@ public class ProductController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable("id") Integer id, Model model) {
+    public String showEditForm(@PathVariable("id") Long id, Model model) {
         model.addAttribute("product", productService.getProductById(id));
         model.addAttribute("categories", categoryService.getAllCategories());
         return "products/add";
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable("id") Integer id) {
+    public String deleteProduct(@PathVariable("id") Long id) {
         productService.deleteProduct(id);
         return "redirect:/products";
     }
